@@ -1,4 +1,8 @@
+import torch
 import torch.nn as nn
+import numpy as np
+import torchvision
+
 
 def conv_block(in_dim,out_dim):
     return nn.Sequential(nn.Conv2d(in_dim,in_dim,kernel_size=3,stride=1,padding=1),
@@ -7,12 +11,15 @@ def conv_block(in_dim,out_dim):
                          nn.ELU(True),
                          nn.Conv2d(in_dim,out_dim,kernel_size=1,stride=1,padding=0),
                          nn.AvgPool2d(kernel_size=2,stride=2))
+
+
 def deconv_block(in_dim,out_dim):
     return nn.Sequential(nn.Conv2d(in_dim,out_dim,kernel_size=3,stride=1,padding=1),
                          nn.ELU(True),
                          nn.Conv2d(out_dim,out_dim,kernel_size=3,stride=1,padding=1),
                          nn.ELU(True),
                          nn.UpsamplingNearest2d(scale_factor=2))
+
 
 class Discriminator(nn.Module):
     def __init__(self, nc, ndf, hidden_size, imageSize):
@@ -99,8 +106,9 @@ class Discriminator(nn.Module):
         out = self.deconv4(out)
         return out
 
+
 class Generator(nn.Module):
-    def __init__(self,nc,ngf,nz,imageSize):
+    def __init__(self, nc, ngf, nz, imageSize):
         super(Generator,self).__init__()
         self.embed1 = nn.Linear(nz, ngf*8*8)
         self.deconv1 = deconv_block(ngf, ngf)
@@ -126,7 +134,7 @@ class Generator(nn.Module):
         self.ngf = ngf
         self.imageSize = imageSize
 
-    def forward(self,x):
+    def forward(self, x):
         out = self.embed1(x)
         out = out.view(out.size(0), self.ngf, 8, 8)
         out = self.deconv1(out)
@@ -134,3 +142,26 @@ class Generator(nn.Module):
         out = self.deconv3(out)
         out = self.deconv4(out)
         return out
+
+    def sample(self, batch_size, noise=None):
+        if noise is None:
+            noise = torch.rand([batch_size, 64]).to(self.embed1.weight.device)*2 - 1
+        with torch.no_grad():
+            out = self.forward(noise)
+        return out
+
+
+if __name__ == "__main__":
+    generator = Generator(3, 128, 64, 128)
+    generator.load_state_dict(torch.load('/home/nazar/faces/workshop_controlled_image_synthesis/weights/BEGAN.pth'))
+    images = generator.sample(16)
+    grid = torchvision.utils.make_grid(images)
+    from scipy.misc import imsave
+    imsave('samples.png', np.transpose(grid.cpu().numpy(), [1, 2, 0]))
+
+
+
+
+
+
+
