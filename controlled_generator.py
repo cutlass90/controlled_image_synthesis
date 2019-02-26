@@ -1,7 +1,7 @@
 from torch import nn
-from modifier import Modifier
-from age_gender_race_estimator import AgeGenderRaceEstimator
-from GAN import Generator
+from .modifier import Modifier
+from .age_gender_race_estimator import AgeGenderRaceEstimator
+from .BEGAN import Generator
 
 
 class ControlledGenerator(nn.Module):
