@@ -5,9 +5,7 @@ from shutil import rmtree
 import numpy as np
 from scipy.misc import imsave, imread
 
-from new_alignment_utils import align_image
-from multiprocessing import Pool
-from joblib import Parallel, delayed
+from .new_alignment_utils import align_image
 
 BASE_DIR = '/home/nazar/Downloads/UTKFace dataset/original'
 SAVE_DIR = '/home/nazar/Downloads/UTKFace dataset/aligned'

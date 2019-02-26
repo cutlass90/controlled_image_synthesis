@@ -9,7 +9,7 @@ import numpy as np
 from scipy.misc import imresize, imread
 from sklearn.model_selection import train_test_split
 
-from new_alignment_utils import img2tensor
+from .new_alignment_utils import img2tensor
 
 
 class AgeGenderRaceDataset(Dataset):

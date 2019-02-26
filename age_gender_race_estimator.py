@@ -1,8 +1,7 @@
 import torch
 from torch import nn
-import torch.nn.functional as F
 
-from modules import ResnetBlock
+from .modules import ResnetBlock
 
 
 class AgeGenderRaceEstimator(nn.Module):
@@ -62,6 +61,7 @@ class AgeGenderRaceEstimator(nn.Module):
         gender_logits = self.gender(x)
         race_logits = self.race(x)
         return age_logits, gender_logits, race_logits
+
 
 if __name__ == "__main__":
     estimator = AgeGenderRaceEstimator(128)
